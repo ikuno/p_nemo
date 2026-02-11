@@ -1,0 +1,22 @@
+{
+  "version": "3.7.3",
+  "project": "nvidia_project",
+  "steeringDir": "./steering",
+  "storageDir": "./storage",
+  "llm": {
+    "provider": "anthropic",
+    "model": "claude-sonnet-4-20250514",
+    "maxTokens": 4096,
+    "temperature": 0.7
+  },
+  "knowledge": {
+    "storagePath": "./.knowledge",
+    "autoSave": true
+  },
+  "integration": {
+    "neuralThreshold": 0.7,
+    "symbolicThreshold": 0.8,
+    "defaultStrategy": "neural-validated",
+    "gracefulDegradation": true
+  }
+}

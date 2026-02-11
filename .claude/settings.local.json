@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(source:*)",
+      "Bash(conda activate:*)",
+      "Bash(conda list:*)",
+      "Bash(python -c:*)",
+      "Bash(conda info:*)",
+      "Bash(pip3:*)",
+      "Bash(/home/ikuno/miniforge3/envs/nemo/bin/python:*)",
+      "Bash(pip install:*)",
+      "Bash(python -m pytest:*)",
+      "Bash(python cli.py:*)",
+      "Bash(python:*)"
+    ]
+  }
+}
