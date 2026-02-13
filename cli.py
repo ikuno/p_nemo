@@ -26,7 +26,11 @@ from src.geotransolver.config import (
 from src.geotransolver.data import generate_dataset, CylinderFlowDataset
 from src.geotransolver.model import GeoTransolver2D
 from src.geotransolver.metrics import mean_absolute_error, relative_l1_norm, r_squared
-from src.geotransolver.visualize import plot_field_comparison, plot_training_curves
+from src.geotransolver.visualize import (
+    plot_field_comparison,
+    plot_training_curves,
+    plot_velocity_vectors,
+)
 
 
 def cmd_train(args):
@@ -239,9 +243,17 @@ def cmd_visualize(args):
     )
     pts = positions[0]
 
-    # Velocity magnitude
-    pred_vel_mag = pred[0, :, :2].norm(dim=-1)
-    true_vel_mag = target[:, :2].norm(dim=-1)
+    # Velocity vectors (quiver plot)
+    pred_vel = pred[0, :, :2]
+    true_vel = target[:, :2]
+    plot_velocity_vectors(
+        pts, pred_vel, true_vel,
+        os.path.join(args.output, "velocity_vectors.png"),
+    )
+
+    # Velocity magnitude (scalar comparison)
+    pred_vel_mag = pred_vel.norm(dim=-1)
+    true_vel_mag = true_vel.norm(dim=-1)
     plot_field_comparison(
         pts, pred_vel_mag, true_vel_mag,
         "Velocity Magnitude", os.path.join(args.output, "velocity.png"),

@@ -53,6 +53,59 @@ def plot_field_comparison(
     plt.close(fig)
 
 
+def plot_velocity_vectors(
+    positions: torch.Tensor,
+    pred_velocity: torch.Tensor,
+    true_velocity: torch.Tensor,
+    output_path: str,
+    cylinder_R: float = 1.0,
+    scale: float = 30.0,
+):
+    """REQ-007-04: Quiver plot comparing predicted vs. analytical velocity vectors.
+
+    Args:
+        positions: (N, 2) point positions.
+        pred_velocity: (N, 2) predicted velocity (vx, vy).
+        true_velocity: (N, 2) ground truth velocity (vx, vy).
+        output_path: path to save the figure.
+        cylinder_R: cylinder radius for overlay.
+        scale: quiver scale factor (larger = shorter arrows).
+    """
+    pos = positions.detach().cpu().numpy()
+    pred = pred_velocity.detach().cpu().numpy()
+    true = true_velocity.detach().cpu().numpy()
+
+    pred_mag = np.linalg.norm(pred, axis=1)
+    true_mag = np.linalg.norm(true, axis=1)
+    vmin = 0.0
+    vmax = max(true_mag.max(), pred_mag.max())
+
+    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+
+    for ax, vel, mag, title in zip(
+        axes,
+        [true, pred],
+        [true_mag, pred_mag],
+        ["True Velocity", "Predicted Velocity"],
+    ):
+        q = ax.quiver(
+            pos[:, 0], pos[:, 1],
+            vel[:, 0], vel[:, 1],
+            mag, cmap="coolwarm", scale=scale,
+            clim=(vmin, vmax), width=0.003,
+        )
+        ax.add_patch(Circle((0, 0), cylinder_R, fill=True, color="gray", alpha=0.6))
+        ax.set_aspect("equal")
+        ax.set_title(title)
+        ax.set_xlabel("x")
+        ax.set_ylabel("y")
+        plt.colorbar(q, ax=ax, label="|V|")
+
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=150, bbox_inches="tight")
+    plt.close(fig)
+
+
 def plot_training_curves(
     train_losses: list[float],
     val_metrics: dict[str, list[float]],
