@@ -1,6 +1,7 @@
 """Configuration dataclasses for GeoTransolver 2D.
 
 REQ-001 through REQ-007: Centralized configuration for all components.
+REQ-MC-001, REQ-MC-002: Multi-cylinder rectangular domain extension.
 """
 
 from dataclasses import dataclass, field
@@ -68,3 +69,51 @@ class TrainingConfig:
     scheduler_gamma: float = 0.5
     log_interval: int = 10
     checkpoint_dir: str = "output/checkpoints"
+    num_workers: int = 4  # DataLoader worker processes
+
+
+# ---------------------------------------------------------------------------
+# Multi-cylinder rectangular domain (REQ-MC-001, REQ-MC-002)
+# ---------------------------------------------------------------------------
+
+@dataclass
+class CylinderSpec:
+    """REQ-MC-001: Single cylinder geometry specification."""
+
+    x: float  # Center x
+    y: float  # Center y
+    R: float  # Radius
+
+
+@dataclass
+class MultiCylinderFlowConfig:
+    """REQ-MC-001: Physical parameters for 3-cylinder potential flow.
+
+    Default: 3 cylinders in a row — (-4,0), (0,0), (4,0), R=1.0 each.
+    Center spacing: 4.0, clearance between surfaces: 2.0.
+    Domain: [-8, 8] x [-4, 4] rectangular channel.
+    """
+
+    cylinders: list = field(
+        default_factory=lambda: [
+            CylinderSpec(x=-4.0, y=0.0, R=1.0),
+            CylinderSpec(x=0.0,  y=0.0, R=1.0),
+            CylinderSpec(x=4.0,  y=0.0, R=1.0),
+        ]
+    )
+    domain: tuple[float, float, float, float] = (-8.0, 8.0, -4.0, 4.0)  # xmin,xmax,ymin,ymax
+    rho: float = 1.0
+    p_inf: float = 0.0
+    U_range: tuple[float, float] = (0.5, 2.0)
+
+
+@dataclass
+class RectDataConfig:
+    """REQ-MC-002: Dataset parameters for rectangular multi-cylinder domain."""
+
+    n_samples: int = 100   # Number of samples (varying U_inf)
+    n_points: int = 512    # Domain points per sample
+    n_geom: int = 192      # Total geometry boundary points (shared among cylinders)
+    train_ratio: float = 0.7
+    val_ratio: float = 0.15
+    test_ratio: float = 0.15

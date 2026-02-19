@@ -1,0 +1,27 @@
+name: myenv
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.12
+  - pip
+
+  # PyTorch with CUDA 12.8 (compatible with CUDA 13.0 driver via backward compat)
+  # For Blackwell GPU (RTX PRO 6000), PyTorch >= 2.6 is recommended
+  - pytorch>=2.6
+  - torchvision
+  - pytorch-cuda=12.8
+
+  # Core scientific stack
+  - numpy>=2.0
+  - matplotlib>=3.8
+
+  # Testing
+  - pytest>=8.0
+  - pytest-cov
+
+  # Development utilities
+  - pip:
+    - -r requirements.txt

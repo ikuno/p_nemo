@@ -13,7 +13,10 @@
       "Bash(python cli.py:*)",
       "Bash(python:*)",
       "Bash(python3:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(wc:*)",
+      "Bash(conda run:*)",
+      "Bash(nvidia-smi:*)"
     ]
   }
 }
